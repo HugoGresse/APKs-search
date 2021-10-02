@@ -1,0 +1,17 @@
+{
+    "name": "plantnet-fake-scrapper",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "run": "node --experimental-specifier-resolution=node src/index.js"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "type": "module",
+    "dependencies": {
+        "fs-extra": "^10.0.0",
+        "google-play-scraper": "^8.0.4"
+    }
+}
