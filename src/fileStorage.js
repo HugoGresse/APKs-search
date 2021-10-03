@@ -5,9 +5,11 @@ const __dirname = process.cwd()
 
 export const STORAGE_TOKEN_PATH = `${__dirname}/cache/oauthToken.txt`
 export const STORAGE_DOWNLOAD_FOLDER = `${__dirname}/cache/downloadedApks`
+export const DECOMPILED_FOLDER_PATH =   `${__dirname}/cache/decompiledApks`
+
+
+
 const STORAGE_FILEPATH = `${__dirname}/cache/storage.json`
-
-
 export class FileStorage {
     data = null
 
@@ -25,10 +27,12 @@ export class FileStorage {
     }
     updateStoredData = async (data) => {
         await this.ensureFile()
+        delete data['org.plantnet']
         await fs.writeJson(STORAGE_FILEPATH, data)
     }
     persist = async () => {
         await this.ensureFile()
+        delete this.data['org.plantnet']
         await fs.writeJson(STORAGE_FILEPATH, this.data)
     }
     getAppsToDownload = async () => {
@@ -47,6 +51,17 @@ export class FileStorage {
 
         return Object.keys(this.data).reduce((acc, appId) => {
             if (this.data[appId].status === Status.downloaded) {
+                acc.push(appId)
+            }
+
+            return acc
+        }, [])
+    }
+    getAppsToInspect = async () => {
+        await this.getStoredData()
+
+        return Object.keys(this.data).reduce((acc, appId) => {
+            if (this.data[appId].status === Status.unpacked) {
                 acc.push(appId)
             }
 

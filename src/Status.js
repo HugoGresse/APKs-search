@@ -2,6 +2,7 @@ export const Status = {
     "new": 0,
     "downloading": 1,
     "downloaded": 2,
-    "unpacked": 3,
-    "analysed": 4
+    "unpacking": 3,
+    "unpacked": 4,
+    "analysed": 5
 }

@@ -3,6 +3,7 @@ import { Status } from './Status'
 import { PLANTNET_ID, SEARCH_COUNTRY, SEARCH_RESULTS, SEARCH_SIMILAR_ENABLE, SEARCH_TERMS } from './Constants'
 
 export const search = async () => {
+    console.log(`> Searching apps`)
     const appsById = {}
 
     try {
@@ -14,7 +15,7 @@ export const search = async () => {
             }
         })
 
-        if(SEARCH_SIMILAR_ENABLE) {
+        if (SEARCH_SIMILAR_ENABLE) {
             const similarApps = await searchBySimilar()
             similarApps.forEach(app => {
                 appsById[app.appId] = {
@@ -26,6 +27,8 @@ export const search = async () => {
     } catch (error) {
         console.error("Error in search", error)
     }
+
+    console.log(`Found ${Object.keys(appsById).length} apps`)
 
     return appsById
 }
@@ -62,12 +65,14 @@ const searchBySimilar = async () => {
         price: "free"
     })
 
-    results.forEach(result => (
-        apps.push({
-            appId: result.appId,
-            url: result.url,
-            title: result.title,
-        })
-    ))
+    results.forEach(result => {
+        if (result.priceText === "FREE") {
+            apps.push({
+                appId: result.appId,
+                url: result.url,
+                title: result.title,
+            })
+        }
+    })
     return apps
 }

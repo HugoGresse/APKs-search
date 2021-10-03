@@ -12,4 +12,5 @@ TODO:
 
 1. npm i
 2. Copy `.env.example` to `.env` and fill missing values
-3. Run `npm run run`
+3. Install `apktool` [here](https://ibotpeaches.github.io/Apktool/install/)
+4. Run `npm run run`

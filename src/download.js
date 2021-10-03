@@ -6,6 +6,7 @@ import { Env } from './Constants'
 const gpAPI = new GooglePlayAPI(Env.email, Env.gsfId)
 
 export const downloadAll = async (appIds = []) => {
+    console.log(`> Downloading ${appIds.length} apps`)
     const token = await gpAPI.getGoogleToken(Env.oauthToken, STORAGE_TOKEN_PATH)
 
     await gpAPI.googleAuth(token)
