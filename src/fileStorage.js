@@ -2,6 +2,9 @@ import fs from 'fs-extra'
 import { Status } from './Status'
 
 const __dirname = process.cwd()
+
+export const STORAGE_TOKEN_PATH = `${__dirname}/cache/oauthToken.txt`
+export const STORAGE_DOWNLOAD_FOLDER = `${__dirname}/cache/downloadedApks`
 const STORAGE_FILEPATH = `${__dirname}/cache/storage.json`
 
 
@@ -20,10 +23,13 @@ export class FileStorage {
         this.data = await fs.readJson(STORAGE_FILEPATH)
         return this.data
     }
-
     updateStoredData = async (data) => {
         await this.ensureFile()
         await fs.writeJson(STORAGE_FILEPATH, data)
+    }
+    persist = async () => {
+        await this.ensureFile()
+        await fs.writeJson(STORAGE_FILEPATH, this.data)
     }
     getAppsToDownload = async () => {
         await this.getStoredData()
@@ -36,8 +42,23 @@ export class FileStorage {
             return acc
         }, [])
     }
+    getAppsToExtract = async () => {
+        await this.getStoredData()
+
+        return Object.keys(this.data).reduce((acc, appId) => {
+            if (this.data[appId].status === Status.downloaded) {
+                acc.push(appId)
+            }
+
+            return acc
+        }, [])
+    }
     updateAppStatus = (appId, status) => {
-        this.data[appId] = status
+        this.data[appId] = {
+            ...this.data[appId],
+            status,
+            dateUpdated: new Date().toGMTString()
+        }
     }
 
 

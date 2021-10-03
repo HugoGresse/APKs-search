@@ -1,5 +1,7 @@
 import { search } from './search'
 import { fileStorage } from './fileStorage'
+import { downloadAll } from './download'
+
 
 const main = async () => {
     const data = await fileStorage.getStoredData()
@@ -14,10 +16,11 @@ const main = async () => {
 
     await fileStorage.updateStoredData(data)
 
-    const appsToDownload = await fileStorage.getAppsToDownload()
+    const appIdsToDownload = await fileStorage.getAppsToDownload()
+    await downloadAll(appIdsToDownload)
 
-    // TODO here
-
+    const appIdToExtract = await fileStorage.getAppsToExtract()
+    console.log(appIdToExtract)
 }
 
 
