@@ -9,13 +9,13 @@ Automatic APKs downloader and analyzer aiming to search for specific term usage 
 # How to use:
 
 ```
+npm run cli -- -s "plant identification" -t "plantnet.org" -e "org.plantnet" -c 100
+```
+or
+```
 node --experimental-specifier-resolution=node  -r dotenv/config src/index.js -s "plant identification" -t "plantnet.org" -e "org.plantnet" -c 100
 ```
 
-or
-```
-npm run cli -- -s "plant identification" -t "plantnet.org" -e "org.plantnet" -c 100
-```
 
 ### Example output:
 <details>
@@ -201,7 +201,7 @@ Options:
 
 ### Setup
 
-1. npm i
+1. `npm i`
 2. Copy `.env.example` to `.env` and fill missing values according to the doc in the file itself
-3. Install `apktool` [here](https://ibotpeaches.github.io/Apktool/install/)
-4. Run `npm run cli`
+3. Install `apktool` [here](https://ibotpeaches.github.io/Apktool/install/) and have it available in your `PATH`
+4. Run `npm run cli` with the correct values
