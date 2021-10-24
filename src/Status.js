@@ -4,5 +4,7 @@ export const Status = {
     "downloaded": 2,
     "unpacking": 3,
     "unpacked": 4,
-    "analysed": 5
+    "analysed": 5,
+    "matched": 7,
+    "error": -1,
 }

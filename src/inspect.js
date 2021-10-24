@@ -1,38 +1,51 @@
 import fs from 'fs-extra'
 import path from 'path'
-import { DECOMPILED_FOLDER_PATH } from './fileStorage'
+import { DECOMPILED_FOLDER_PATH, fileStorage } from './fileStorage'
+import { Status } from './Status'
 
 const FILE_TYPES = ['.js', ".bundle", ".xml", ".json", ".html", ".htm", ".txt", ".smali"]
-const SEARCH_TERM = "plantnet"
 
-export const inspectAppIds = async (appIds = []) => {
+export const inspectAppIds = async (appIds = [], searchTerm) => {
     console.log(`> Inspecting ${appIds.length} apps`)
 
+    const results = {}
+
     for(const appId of appIds) {
-        await inspectAppId(appId)
-    }
+        const matchingFiles = await inspectAppId(appId, searchTerm)
 
-}
-
-const inspectAppId = async (appId) => {
-    console.log("Inspect ", appId)
-    const folder = `${DECOMPILED_FOLDER_PATH}/${appId}`
-
-    await searchFilesInDirectoryAsync(folder, SEARCH_TERM, FILE_TYPES)
-
-}
-
-async function searchFilesInDirectoryAsync(dir, filter, exts = []) {
-    const found = await getFilesInDirectoryAsync(dir, exts)
-
-    for (const file of found) {
-        const fileContent = await fs.readFile(file)
-
-        if (fileContent.includes(SEARCH_TERM)) {
-            console.log(`Your word was found in file: ${file}`)
+        if(matchingFiles.length > 0) {
+            fileStorage.updateAppStatus(appId, Status.matched)
+            results[appId] = matchingFiles
+        } else {
+            fileStorage.updateAppStatus(appId, Status.analysed)
         }
     }
 
+    return results
+}
+
+const inspectAppId = async (appId, searchTerm) => {
+    console.log("Inspect ", appId)
+    const folder = `${DECOMPILED_FOLDER_PATH}/${appId}`
+
+    return await searchFilesInDirectoryAsync(folder, searchTerm, FILE_TYPES)
+}
+
+async function searchFilesInDirectoryAsync(dir, searchTerm, exts = []) {
+    const files = await getFilesInDirectoryAsync(dir, exts)
+
+    const foundFiles = []
+
+    for (const file of files) {
+        const fileContent = await fs.readFile(file)
+
+        if (fileContent.includes(searchTerm)) {
+            foundFiles.push(file)
+            console.log(` - Your term was found in file: ${file}`)
+        }
+    }
+
+    return foundFiles
 }
 
 // Using recursion, we find every file with the desired extention, even if its deeply nested in subfolders.

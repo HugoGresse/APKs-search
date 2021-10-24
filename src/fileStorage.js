@@ -5,38 +5,44 @@ const __dirname = process.cwd()
 
 export const STORAGE_TOKEN_PATH = `${__dirname}/cache/oauthToken.txt`
 export const STORAGE_DOWNLOAD_FOLDER = `${__dirname}/cache/downloadedApks`
-export const DECOMPILED_FOLDER_PATH =   `${__dirname}/cache/decompiledApks`
-
+export const DECOMPILED_FOLDER_PATH = `${__dirname}/cache/decompiledApks`
 
 
 const STORAGE_FILEPATH = `${__dirname}/cache/storage.json`
+
 export class FileStorage {
     data = null
 
-    ensureFile = async () => {
-        const fileExists = await fs.exists(STORAGE_FILEPATH)
-
-        if (!fileExists) {
-            await fs.writeJson(STORAGE_FILEPATH, {})
-        }
-    }
-    getStoredData = async () => {
+    init = async () => {
         await this.ensureFile()
-        this.data = await fs.readJson(STORAGE_FILEPATH)
         return this.data
     }
-    updateStoredData = async (data) => {
-        await this.ensureFile()
-        delete data['org.plantnet']
-        await fs.writeJson(STORAGE_FILEPATH, data)
+    ensureFile = async () => {
+        if (!this.data) {
+            const fileExists = await fs.exists(STORAGE_FILEPATH)
+
+            if (!fileExists) {
+                await fs.writeJson(STORAGE_FILEPATH, {})
+            }
+            this.data = await fs.readJson(STORAGE_FILEPATH)
+        }
     }
     persist = async () => {
         await this.ensureFile()
-        delete this.data['org.plantnet']
         await fs.writeJson(STORAGE_FILEPATH, this.data)
     }
+    addApps = async (apps = {}) => {
+        await this.ensureFile()
+
+        Object.keys(apps).forEach(appId => {
+            if (!this.data[appId]) {
+                this.data[appId] = apps[appId]
+            }
+        })
+        await this.persist()
+    }
     getAppsToDownload = async () => {
-        await this.getStoredData()
+        await this.ensureFile()
 
         return Object.keys(this.data).reduce((acc, appId) => {
             if (this.data[appId].status < Status.downloaded) {
@@ -47,8 +53,7 @@ export class FileStorage {
         }, [])
     }
     getAppsToExtract = async () => {
-        await this.getStoredData()
-
+        await this.ensureFile()
         return Object.keys(this.data).reduce((acc, appId) => {
             if (this.data[appId].status === Status.downloaded) {
                 acc.push(appId)
@@ -57,12 +62,13 @@ export class FileStorage {
             return acc
         }, [])
     }
-    getAppsToInspect = async () => {
-        await this.getStoredData()
-
+    getAppsToInspect = async (appIds, skipOld) => {
         return Object.keys(this.data).reduce((acc, appId) => {
-            if (this.data[appId].status === Status.unpacked) {
-                acc.push(appId)
+            if (appIds.includes(appId)) {
+                const matches = skipOld ? this.data[appId].status === Status.unpacked : this.data[appId].status >= Status.unpacked
+                if (matches) {
+                    acc.push(appId)
+                }
             }
 
             return acc

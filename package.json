@@ -1,10 +1,10 @@
 {
-    "name": "plantnet-fake-scrapper",
+    "name": "apks-search",
     "version": "1.0.0",
     "description": "",
     "main": "index.js",
     "scripts": {
-        "run": "node --experimental-specifier-resolution=node  -r dotenv/config src/index.js"
+        "cli": "node --experimental-specifier-resolution=node  -r dotenv/config src/index.js"
     },
     "keywords": [],
     "author": "",
@@ -12,6 +12,7 @@
     "type": "module",
     "dependencies": {
         "@gonetone/google-play-api": "^1.1.1",
+        "commander": "^8.3.0",
         "dotenv": "^10.0.0",
         "fs-extra": "^10.0.0",
         "google-play-scraper": "^8.0.4"
