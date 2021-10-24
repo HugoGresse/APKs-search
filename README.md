@@ -1,10 +1,10 @@
-Automatic APKs downloader and analyzer aiming to search for specific term usage (like a domain dame) within apps downloaded apps.
+Automatic APKs downloader and analyzer aiming to search for specific term usage (like a domain dame) within app codes. This is useful if you have free apps using your own API without illegally for example.
 
-Process:
+**Process**:
 1. Search for apps to download on Google Play Store
 2. Download APKs from the Play Store
 3. Decompile the APKs
-4. Search for the given term reference in specific files
+4. Search for the given term reference in specific files content (`['.js', ".bundle", ".xml", ".json", ".html", ".htm", ".txt", ".smali"]`)
 
 # How to use:
 
